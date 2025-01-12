@@ -1,6 +1,7 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const newSchema = new Schema(
+
+const userSchema = new Schema(
     {
         username: {
             type: String,
@@ -23,9 +24,10 @@ const newSchema = new Schema(
     }
 );
 
-userSchema.virtual('friendCount').get*(function ( {
+//Create virtual called 'friendcount' that retrieves the length of the user's friends array field on query
+userSchema.virtual('friendCount').get(function () {
     return this.friends.length;
-}))
+});
 
 const User = model ('User', userSchema);
 
