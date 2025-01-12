@@ -1,17 +1,14 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
-  "compilerOptions": {
-    "target": "ES6",
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
-  },
-  "include": ["src"]
+"compilerOptions": {
+  "target": "ES6",                         // Specify ECMAScript target version
+  "module": "CommonJS",                    // Use CommonJS module system
+  "outDir": "./dist",                      // Output directory for compiled files
+  "rootDir": "./src",                      // Root directory of source files
+  "strict": true,                          // Enable strict type-checking
+  "esModuleInterop": true,                 // Allow import/export interop
+  "skipLibCheck": true,                    // Skip type checking of declaration files
+  "forceConsistentCasingInFileNames": true // Ensure consistent casing in imports
+},
+"include": ["src"],                        // Include source files
+"exclude": ["node_modules"]               // Exclude unnecessary files
 }

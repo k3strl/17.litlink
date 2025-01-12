@@ -13,9 +13,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "mongoose": "^8.9.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -34,9 +32,9 @@
     "typescript-eslint": "^8.11.0",
     "vite": "^5.4.10"
   },
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "description": "A social network API",
   "main": "eslint.config.js",
   "keywords": [],
-  "author": "",
+  "author": "k3strl",
   "license": "ISC"
 }
