@@ -23,4 +23,4 @@ app.listen(PORT, () => {
     console.log(`API server running on http://localhost:${PORT}`);
 });
 
-// Main entry point
+// Main entry point, start server
