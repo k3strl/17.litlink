@@ -1,29 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
-
-
-const reactionSchema = new Schema(
-    {
-        reactionID: {
-            type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId()
-        },
-        reactionBody: {
-            type: String,
-            required: true,
-            maxLength: 280,
-        },
-        username: {
-            type: String,
-            required: true,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: (timestamp: Date) => timestamp.toLocaleString(),
-        },
-    },
-);
-
+import { reactionSchema } from './Reaction'
 
 const thoughtSchema = new Schema(
     {
@@ -36,7 +12,7 @@ const thoughtSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now,
-            get: (timestamp: Date) => timestamp.toLocaleString();
+            get: (timestamp: Date) => timestamp.toLocaleString(),
         },
         username: {
             type: String,
@@ -48,7 +24,8 @@ const thoughtSchema = new Schema(
         toJSON: {
             virtuals: true,
             getters: true
-        }, id: false
+        }, 
+        id: false,
     }
 );
 
