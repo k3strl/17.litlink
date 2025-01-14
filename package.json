@@ -1,40 +1,25 @@
 {
   "name": "litlink",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "node dist/server.js",
-    "dev": "nodemon src/server.ts"
-  },
+  "version": "1.0.0",
+  "main": "index.js",
+"scripts": {
+  "start": "node dist/server.js",
+  "dev": "nodemon src/server.ts"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.4"
+    "mongoose": "^8.9.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.10.5",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
-    "eslint": "^9.13.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.14",
-    "globals": "^15.11.0",
+    "@types/node": "^22.10.6",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "typescript": "~5.6.2",
-    "typescript-eslint": "^8.11.0",
-    "vite": "^5.4.10"
-  },
-  "description": "A social network API",
-  "main": "eslint.config.js",
-  "keywords": [],
-  "author": "k3strl",
-  "license": "ISC"
+    "typescript": "^5.7.3"
+  }
 }

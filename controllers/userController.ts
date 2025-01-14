@@ -1,6 +1,15 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 
+// getAllUsers
+// getUserById
+// createUser
+// updateUser
+// deleteUser
+// addFriend
+// removeFriend
+
+
 
 export const getAllUsers = async (req, res) => {
     try {

@@ -19,8 +19,8 @@ mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
+// Start server
 app.listen(PORT, () => {
     console.log(`API server running on http://localhost:${PORT}`);
 });
 
-// Main entry point, start server
