@@ -10,16 +10,29 @@ import User from '../models/User';
 // removeFriend
 
 
-
+// Get complete list of users.
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
-        res.json(users);
+        const allUsers = await User.find();
+        // OR, User.find().populate('thoughts').populate('friends'); would also populate related thoughts and friends.
+        //! Test this later!
+        res.json(allUsers);
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ 'Failed to fetch users.' });
     }
 };
 
+// Find one specific user by ID.
+export const getUserById = async (req, res) => {
+    try {
+        const user = await User.findOne();
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ 'Failed to find user.' })
+    }
+}
+
+// Create a user.
 export const createUser = async (req, res) => {
     try {
         const newUser = await User.create(req.body);
@@ -28,3 +41,12 @@ export const createUser = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+export const updateUser = async (req, res) => {
+    try {
+        const updatedUser = await User.create(req.body);
+        res.json(updatedUser);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}; 

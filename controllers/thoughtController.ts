@@ -2,6 +2,15 @@ import { Request, Response } from 'express';
 import Thought from '../models/Thought';
 import User from '../models/User';
 
+// getAllThoughts
+// createThought
+// updateThought
+// deleteThought
+
+
+
+
+
 // Get all thoughts
 export const getAllThoughts = async (req: Request, res: Response): Promise<void> => {
     try {
