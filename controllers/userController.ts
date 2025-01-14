@@ -15,7 +15,7 @@ export const getAllUsers = async (req, res) => {
     try {
         const allUsers = await User.find();
         // OR, User.find().populate('thoughts').populate('friends'); would also populate related thoughts and friends.
-        //! Test this later!
+        //! Test this later if time allows
         res.json(allUsers);
     } catch (err) {
         res.status(500).json({ 'Failed to fetch users.' });
