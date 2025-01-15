@@ -2,10 +2,13 @@ import { Request, Response } from 'express';
 import Thought from '../models/Thought';
 import User from '../models/User';
 
-// getAllThoughts
+//// getAllThoughts
+//// getThoughtById (opt)
 // createThought
 // updateThought
 // deleteThought
+// addReaction
+// delet
 
 
 
@@ -14,17 +17,31 @@ import User from '../models/User';
 // Get all thoughts
 export const getAllThoughts = async (req: Request, res: Response): Promise<void> => {
     try {
-        const thoughts = await Thought.find().select('-__v'); // Exclude `__v` field
-        if (!thoughts.length) {
-            res.status(404).json({ message: 'No thoughts found' });
+        const allThoughts = await Thought.find().select('-__v');
+        if (!allThoughts.length) {
+            res.status(404).json({ message: 'Empty brain... No thoughts by that id.' });
             return;
         }
-        res.status(200).json(thoughts);
+        res.status(200).json(allThoughts);
     } catch (err) {
-        console.error(`[ERROR] Failed to fetch thoughts: ${err.message}`);
-        res.status(500).json({ message: 'Failed to fetch thoughts', error: err.message });
+        res.status(500).json({ message: 'Error fetching all thoughts' });
     }
 };
+
+// Get single thought by its ID.
+export const getThoughtById = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const oneThought = await Thought.findById(req.params.thoughtId).select('-__v');
+        if (!oneThought) {
+            res.status(404).json({ message: 'Can\'t find that thought.' });
+            return;
+        }
+        res.status(200).json(oneThought);
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch thought' });
+    }
+};
+
 
 // Create a new thought and associate it with a user
 export const createThought = async (req: Request, res: Response): Promise<void> => {
@@ -38,13 +55,12 @@ export const createThought = async (req: Request, res: Response): Promise<void> 
         );
 
         if (!updatedUser) {
-            res.status(404).json({ message: 'No user found with this ID!' });
+            res.status(404).json({ message: 'No user found with this id.' });
             return;
         }
-
         res.status(201).json(newThought);
     } catch (err) {
-        res.status(500).json({ message: 'Failed to create thought', error: err.message });
+        res.status(500).json({ message: 'Brain fart... Failed to create thought' });
     }
 };
 
@@ -55,16 +71,14 @@ export const updateThought = async (req: Request, res: Response): Promise<void> 
             req.params.thoughtId,
             req.body,
             { new: true, runValidators: true }
-        );
-
+        ).select('-__v');
         if (!updatedThought) {
-            res.status(404).json({ message: 'Thought not found' });
+            res.status(404).json({ message: 'Brain empty. No thoughts found.' });
             return;
         }
-
         res.status(200).json(updatedThought);
     } catch (err) {
-        res.status(500).json({ message: 'Failed to update thought', error: err.message });
+        res.status(500).json({ message: 'Failed to update thought' });
     }
 };
 
@@ -72,9 +86,8 @@ export const updateThought = async (req: Request, res: Response): Promise<void> 
 export const deleteThought = async (req: Request, res: Response): Promise<void> => {
     try {
         const deletedThought = await Thought.findByIdAndDelete(req.params.thoughtId);
-
         if (!deletedThought) {
-            res.status(404).json({ message: 'Thought not found' });
+            res.status(404).json({ message: 'Brain empty. Thought not found' });
             return;
         }
 
@@ -82,10 +95,9 @@ export const deleteThought = async (req: Request, res: Response): Promise<void> 
             { thoughts: req.params.thoughtId },
             { $pull: { thoughts: req.params.thoughtId } }
         );
-
         res.status(200).json({ message: 'Thought deleted successfully' });
     } catch (err) {
-        res.status(500).json({ message: 'Failed to delete thought', error: err.message });
+        res.status(500).json({ message: 'Failed to delete thought' });
     }
 };
 
@@ -94,21 +106,18 @@ export const addReaction = async (req: Request, res: Response): Promise<void> =>
     try {
         const { thoughtId } = req.params;
         const reaction = req.body;
-
         const updatedThought = await Thought.findByIdAndUpdate(
             thoughtId,
             { $push: { reactions: reaction } },
             { new: true, runValidators: true }
-        );
-
+        ).select('-__v');
         if (!updatedThought) {
-            res.status(404).json({ message: 'No thought found with this ID!' });
+            res.status(404).json({ message: 'Brain empty. No thought found with that ID.' });
             return;
         }
-
         res.status(200).json(updatedThought);
     } catch (err) {
-        res.status(500).json({ message: 'Failed to add reaction', error: err.message });
+        res.status(500).json({ message: 'Failed to add reaction' });
     }
 };
 
@@ -116,20 +125,18 @@ export const addReaction = async (req: Request, res: Response): Promise<void> =>
 export const removeReaction = async (req: Request, res: Response): Promise<void> => {
     try {
         const { thoughtId, reactionId } = req.params;
-
         const updatedThought = await Thought.findByIdAndUpdate(
             thoughtId,
             { $pull: { reactions: { reactionId } } },
             { new: true }
-        );
-
+        ).select('-__v');
         if (!updatedThought) {
-            res.status(404).json({ message: 'No thought found with this ID!' });
+            res.status(404).json({ message: 'No thought found with that ID.' });
             return;
         }
 
         res.status(200).json(updatedThought);
     } catch (err) {
-        res.status(500).json({ message: 'Failed to remove reaction', error: err.message });
+        res.status(500).json({ message: 'Failed to remove reaction' });
     }
 };
