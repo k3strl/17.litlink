@@ -2,12 +2,12 @@
   "name": "litlink",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "start": "node dist/server.js",
-  "start:dev": "nodemon server.ts",
-  "build": "tsc",
-  "dev": "npm run start:dev"
-},
+  "scripts": {
+    "start": "node dist/server.js",
+    "start:dev": "nodemon server.ts",
+    "build": "tsc",
+    "dev": "npm run start:dev"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
