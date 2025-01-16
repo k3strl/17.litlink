@@ -1,38 +1,27 @@
+// server.ts
 import express, { Application, Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'; // Import mongoose for clean shutdown
 import dotenv from 'dotenv';
-import routes from './routes'; // Corrected import path
+import connectDB from './config/connectDB';
+import routes from './routes';
 
-// Load environment variables
 dotenv.config();
 
 // Validate and type environment variables
 const PORT: number = parseInt(process.env.PORT || '3001', 10);
 const MONGODB_URI: string = process.env.MONGODB_URI || 'mongodb://localhost:27017/litlink';
 
-// Ensure MONGODB_URI is defined
 if (!MONGODB_URI) {
   throw new Error('❌ MONGODB_URI is not defined in the environment variables.');
 }
 
 const app: Application = express();
 
-// Connect to MongoDB
-const connectDB = async (): Promise<void> => {
-  try {
-    await mongoose.connect(MONGODB_URI);
-    console.log('🌍 Connected to MongoDB');
-  } catch (err) {
-    console.error('❌ Error connecting to MongoDB:', err);
-    process.exit(1);
-  }
-};
-
 // Middleware
 app.use(express.json());
 
 // Routes
-app.use('/api', routes);
+app.use('/', routes);
 
 // Clean shutdown function
 const cleanShutdown = async (): Promise<void> => {
@@ -50,14 +39,25 @@ const cleanShutdown = async (): Promise<void> => {
 process.on('SIGINT', cleanShutdown);
 process.on('SIGTERM', cleanShutdown);
 
+// Global error handling for uncaught exceptions and rejections
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ Unhandled Rejection:', reason);
+  process.exit(1);
+});
+
 // Error handling middleware
-app.use((err: unknown, req: Request, res: Response, next: NextFunction): void => {
-  console.error('❌ Unexpected error:', err);
-  res.status(500).json({ message: 'An unexpected error occurred' });
+app.use((err: Error | unknown, req: Request, res: Response, next: NextFunction): void => {
+  console.error('❌ Unexpected middleware error:', err);
+  res.status(500).json({ message: err instanceof Error ? err.message : 'An unexpected middleware error occurred' });
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 API server running on http://localhost:${PORT}`);
-  connectDB();  // Start MongoDB connection after server starts
+  await connectDB(MONGODB_URI);
 });
