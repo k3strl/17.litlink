@@ -1,142 +1,148 @@
 import { Request, Response } from 'express';
-import Thought from '../models/Thought';
-import User from '../models/User';
+import { Types } from 'mongoose';
+import { Thought, User, IThought } from '../models';
 
-//// getAllThoughts
-//// getThoughtById (opt)
-// createThought
-// updateThought
-// deleteThought
-// addReaction
-// delet
+// Custom error class for better error handling
+class ThoughtError extends Error {
+  constructor(public statusCode: number, message: string) {
+    super(message);
+    this.name = 'ThoughtError';
+  }
+}
 
+// Type for thought creation payload
+interface CreateThoughtPayload {
+  thoughtText: string;
+  username: string;
+  userId: Types.ObjectId;
+}
 
-
-
-
-// Get all thoughts
-export const getAllThoughts = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const allThoughts = await Thought.find().select('-__v');
-        if (!allThoughts.length) {
-            res.status(404).json({ message: 'Empty brain... No thoughts by that id.' });
-            return;
-        }
-        res.status(200).json(allThoughts);
-    } catch (err) {
-        res.status(500).json({ message: 'Error fetching all thoughts' });
-    }
+// Centralized error handler
+const handleControllerError = (error: unknown, res: Response): void => {
+  if (error instanceof ThoughtError) {
+    res.status(error.statusCode).json({ message: error.message });
+    return;
+  }
+  res.status(500).json({ message: 'Internal server error' });
 };
 
-// Get single thought by its ID.
+export const getAllThoughts = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const thoughts = await Thought.find().select('-__v');
+    if (!thoughts.length) {
+      throw new ThoughtError(404, 'No thoughts found');
+    }
+    res.status(200).json(thoughts);
+  } catch (error) {
+    handleControllerError(error, res);
+  }
+};
+
 export const getThoughtById = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const oneThought = await Thought.findById(req.params.thoughtId).select('-__v');
-        if (!oneThought) {
-            res.status(404).json({ message: 'Can\'t find that thought.' });
-            return;
-        }
-        res.status(200).json(oneThought);
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to fetch thought' });
+  try {
+    const thought = await Thought.findById(req.params.thoughtId).select('-__v');
+    if (!thought) {
+      throw new ThoughtError(404, 'Thought not found');
     }
+    res.status(200).json(thought);
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
+export const createThought = async (req: Request<{}, {}, CreateThoughtPayload>, res: Response): Promise<void> => {
+  try {
+    const { thoughtText, username, userId } = req.body;
 
-// Create a new thought and associate it with a user
-export const createThought = async (req: Request, res: Response): Promise<void> => {
-    const { params, body } = req;
-    try {
-        const newThought = await Thought.create(body);
-        const updatedUser = await User.findByIdAndUpdate(
-            params.userId,
-            { $push: { thoughts: newThought._id } },
-            { new: true }
-        );
+    const newThought = await Thought.create({ thoughtText, username });
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { thoughts: newThought._id } },
+      { new: true }
+    );
 
-        if (!updatedUser) {
-            res.status(404).json({ message: 'No user found with this id.' });
-            return;
-        }
-        res.status(201).json(newThought);
-    } catch (err) {
-        res.status(500).json({ message: 'Brain fart... Failed to create thought' });
+    if (!updatedUser) {
+      await Thought.findByIdAndDelete(newThought._id);
+      throw new ThoughtError(404, 'User not found');
     }
+
+    res.status(201).json(newThought);
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
-// Update an existing thought
 export const updateThought = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const updatedThought = await Thought.findByIdAndUpdate(
-            req.params.thoughtId,
-            req.body,
-            { new: true, runValidators: true }
-        ).select('-__v');
-        if (!updatedThought) {
-            res.status(404).json({ message: 'Brain empty. No thoughts found.' });
-            return;
-        }
-        res.status(200).json(updatedThought);
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to update thought' });
+  try {
+    const updatedThought = await Thought.findByIdAndUpdate(
+      req.params.thoughtId,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    ).select('-__v');
+
+    if (!updatedThought) {
+      throw new ThoughtError(404, 'Thought not found');
     }
+
+    res.status(200).json(updatedThought);
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
-// Delete a thought and remove its association with a user
 export const deleteThought = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const deletedThought = await Thought.findByIdAndDelete(req.params.thoughtId);
-        if (!deletedThought) {
-            res.status(404).json({ message: 'Brain empty. Thought not found' });
-            return;
-        }
-
-        await User.findOneAndUpdate(
-            { thoughts: req.params.thoughtId },
-            { $pull: { thoughts: req.params.thoughtId } }
-        );
-        res.status(200).json({ message: 'Thought deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to delete thought' });
+  try {
+    const deletedThought = await Thought.findByIdAndDelete(req.params.thoughtId);
+    if (!deletedThought) {
+      throw new ThoughtError(404, 'Thought not found');
     }
+
+    await User.findOneAndUpdate(
+      { thoughts: req.params.thoughtId },
+      { $pull: { thoughts: req.params.thoughtId } }
+    );
+
+    res.status(200).json({ message: 'Thought deleted successfully' });
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
-// Add a reaction to a thought
 export const addReaction = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { thoughtId } = req.params;
-        const reaction = req.body;
-        const updatedThought = await Thought.findByIdAndUpdate(
-            thoughtId,
-            { $push: { reactions: reaction } },
-            { new: true, runValidators: true }
-        ).select('-__v');
-        if (!updatedThought) {
-            res.status(404).json({ message: 'Brain empty. No thought found with that ID.' });
-            return;
-        }
-        res.status(200).json(updatedThought);
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to add reaction' });
+  try {
+    const updatedThought = await Thought.findByIdAndUpdate(
+      req.params.thoughtId,
+      { $push: { reactions: req.body } },
+      { new: true, runValidators: true }
+    ).select('-__v');
+
+    if (!updatedThought) {
+      throw new ThoughtError(404, 'Thought not found');
     }
+
+    res.status(200).json(updatedThought);
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
-// Remove a reaction from a thought
 export const removeReaction = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { thoughtId, reactionId } = req.params;
-        const updatedThought = await Thought.findByIdAndUpdate(
-            thoughtId,
-            { $pull: { reactions: { reactionId } } },
-            { new: true }
-        ).select('-__v');
-        if (!updatedThought) {
-            res.status(404).json({ message: 'No thought found with that ID.' });
-            return;
-        }
+  try {
+    const { thoughtId, reactionId } = req.params;
+    
+    const updatedThought = await Thought.findByIdAndUpdate(
+      thoughtId,
+      { $pull: { reactions: { reactionId } } },
+      { new: true }
+    ).select('-__v');
 
-        res.status(200).json(updatedThought);
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to remove reaction' });
+    if (!updatedThought) {
+      throw new ThoughtError(404, 'Thought not found');
     }
+
+    res.status(200).json(updatedThought);
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };

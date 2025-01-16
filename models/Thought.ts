@@ -1,38 +1,59 @@
-import { Schema, model, Types } from 'mongoose';
-import { reactionSchema } from './Reaction'
+import { Schema, model, Document, Types } from 'mongoose';
+import { IReaction, reactionSchema } from './Reaction';
 
-const thoughtSchema = new Schema(
-    {
-        thoughtText: {
-            type: String,
-            required: true,
-            maxlength: 280,
-            minlength: 1,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: (timestamp: Date) => timestamp.toLocaleString(),
-        },
-        username: {
-            type: String,
-            required: true,
-        },
-        reactions: [reactionSchema],
+// Define the interface for Thought document
+interface IThought extends Document {
+  thoughtText: string;
+  createdAt: Date;
+  username: string;
+  reactions: IReaction[];
+  reactionCount: number; // Virtual property
+}
+
+// Schema configuration
+const schemaOptions = {
+  toJSON: {
+    virtuals: true,
+    getters: true,
+  },
+  id: false,
+} as const;
+
+// Constants for validation
+const TEXT_LENGTH = {
+  MIN: 1,
+  MAX: 280,
+} as const;
+
+const thoughtSchema = new Schema<IThought>(
+  {
+    thoughtText: {
+      type: String,
+      required: true,
+      maxlength: TEXT_LENGTH.MAX,
+      minlength: TEXT_LENGTH.MIN,
     },
-    {
-        toJSON: {
-            virtuals: true,
-            getters: true
-        }, 
-        id: false,
-    }
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (timestamp: Date) => timestamp.toLocaleString(),
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    reactions: [reactionSchema],
+  },
+  schemaOptions
 );
 
-// create virtual called 'reactionCount' that retrieves length of the thoughts 'reactions' array field on query
-thoughtSchema.virtual('reactionCount').get(function () {
-    return this.reactions.length;
+// Virtual for reaction count
+thoughtSchema.virtual('reactionCount').get(function(this: IThought) {
+  return this.reactions.length;
 });
 
-const Thought = model('Thought', thoughtSchema);
+// Create the model
+const Thought = model<IThought>('Thought', thoughtSchema);
+
+export type { IThought };  // Export the interface for use in other files
 export default Thought;
