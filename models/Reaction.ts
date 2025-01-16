@@ -1,24 +1,49 @@
-import { Schema, Types } from 'mongoose';
+import { Schema, Types, Document } from 'mongoose';
+import { formatDate } from '../utils/dateFormat';
 
-export const reactionSchema = new Schema(
-    {
-        reactionID: {
-            type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId()
-        },
-        reactionBody: {
-            type: String,
-            required: true,
-            maxLength: 280,
-        },
-        username: {
-            type: String,
-            required: true,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: (timestamp: Date) => timestamp.toLocaleString(),
-        },
+// Define interface for Reaction subdocument
+interface IReaction extends Document {
+  reactionId: Types.ObjectId;
+  reactionBody: string;
+  username: string;
+  createdAt: Date;
+}
+
+// Constants for validation
+const REACTION_MAX_LENGTH = 280;
+
+// Schema configuration
+const schemaOptions = {
+  _id: false, // Prevents creation of an additional _id field since we're using reactionId
+  toJSON: {
+    getters: true, // Ensure getters are applied when converting to JSON
+  },
+  timestamps: true,
+} as const;
+
+// Reaction schema definition
+const reactionSchema = new Schema<IReaction>(
+  {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
     },
-);
+    reactionBody: {
+      type: String,
+      required: true,
+      maxLength: REACTION_MAX_LENGTH,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Schema.Types.Date, // Use Schema.Types.Date for better typing compatibility
+      default: Date.now,
+    },
+  },
+  schemaOptions);
+
+// Export the schema and interface
+export type { IReaction };
+export { reactionSchema };
