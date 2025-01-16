@@ -1,4 +1,5 @@
 import { Schema, Types, Document } from 'mongoose';
+import { formatDate } from '../utils/dateFormat';
 
 // Define interface for Reaction subdocument
 interface IReaction extends Document {
@@ -9,16 +10,18 @@ interface IReaction extends Document {
 }
 
 // Constants for validation
-const REACTION_LENGTH = {
-  MAX: 280,
-} as const;
+const REACTION_MAX_LENGTH = 280;
 
 // Schema configuration
 const schemaOptions = {
-  _id: false, // Prevents creation of additional _id field since we're using reactionId
+  _id: false, // Prevents creation of an additional _id field since we're using reactionId
+  toJSON: {
+    getters: true, // Ensure getters are applied when converting to JSON
+  },
   timestamps: true,
 } as const;
 
+// Reaction schema definition
 const reactionSchema = new Schema<IReaction>(
   {
     reactionId: {
@@ -28,20 +31,19 @@ const reactionSchema = new Schema<IReaction>(
     reactionBody: {
       type: String,
       required: true,
-      maxLength: REACTION_LENGTH.MAX,
+      maxLength: REACTION_MAX_LENGTH,
     },
     username: {
       type: String,
       required: true,
     },
     createdAt: {
-      type: Date,
+      type: Schema.Types.Date, // Use Schema.Types.Date for better typing compatibility
       default: Date.now,
-      get: (timestamp: Date) => timestamp.toLocaleString(),
     },
   },
-  schemaOptions
-);
+  schemaOptions);
 
-export type { IReaction };  // Export the interface for use in other files
+// Export the schema and interface
+export type { IReaction };
 export { reactionSchema };

@@ -7,7 +7,7 @@ import {
     deleteThought,
     addReaction,
     removeReaction
-} from '../../controllers/thoughtController';
+} from '../controllers/thoughtController';
 
 const router = Router();
 

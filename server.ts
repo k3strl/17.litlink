@@ -1,8 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import routes from './routes/api';
-import connectDB from './config/connection';
+import routes from './routes'; // Corrected import path
 
 // Load environment variables
 dotenv.config();
@@ -11,6 +10,7 @@ dotenv.config();
 const PORT: number = parseInt(process.env.PORT || '3001', 10);
 const MONGODB_URI: string = process.env.MONGODB_URI || 'mongodb://localhost:27017/litlink';
 
+// Ensure MONGODB_URI is defined
 if (!MONGODB_URI) {
   throw new Error('❌ MONGODB_URI is not defined in the environment variables.');
 }
@@ -18,13 +18,15 @@ if (!MONGODB_URI) {
 const app: Application = express();
 
 // Connect to MongoDB
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => console.log('🌍 Connected to MongoDB'))
-  .catch((err: unknown) => {
+const connectDB = async (): Promise<void> => {
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log('🌍 Connected to MongoDB');
+  } catch (err) {
     console.error('❌ Error connecting to MongoDB:', err);
     process.exit(1);
-  });
+  }
+};
 
 // Middleware
 app.use(express.json());
@@ -57,4 +59,5 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction): void =>
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 API server running on http://localhost:${PORT}`);
+  connectDB();  // Start MongoDB connection after server starts
 });

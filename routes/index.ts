@@ -1,14 +1,13 @@
-import { Router, Request, Response } from 'express';
-import apiRoutes from './api';
+import { Router } from 'express';
+import userRoutes from './userRoutes';
+import thoughtRoutes from './thoughtRoutes';
 
 const router = Router();
 
-// API routes
-router.use('/api', apiRoutes);
+// User routes
+router.use('/users', userRoutes);
 
-// Fallback route for unmatched paths
-router.use((req: Request, res: Response) => {
-  res.status(404).send('Wrong route!');
-});
+// Thought routes
+router.use('/thoughts', thoughtRoutes);
 
 export default router;

@@ -34,9 +34,8 @@ const thoughtSchema = new Schema<IThought>(
       minlength: TEXT_LENGTH.MIN,
     },
     createdAt: {
-      type: Date,
+      type: Schema.Types.Date, // Use Schema.Types.Date for better typing compatibility
       default: Date.now,
-      get: (timestamp: Date) => timestamp.toLocaleString(),
     },
     username: {
       type: String,
