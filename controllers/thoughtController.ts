@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 import { Thought, User, IThought } from '../models';
 
-// Custom error class for better error handling
 class ThoughtError extends Error {
   constructor(public statusCode: number, message: string) {
     super(message);
@@ -10,18 +9,16 @@ class ThoughtError extends Error {
   }
 }
 
-// Type for thought creation payload
 interface CreateThoughtPayload {
   thoughtText: string;
   username: string;
   userId: Types.ObjectId;
 }
 
-// Centralized error handler
 const handleControllerError = (error: unknown, res: Response): void => {
   if (error instanceof ThoughtError) {
     res.status(error.statusCode).json({ message: error.message });
-    return;
+    return;  
   }
   res.status(500).json({ message: 'Internal server error' });
 };

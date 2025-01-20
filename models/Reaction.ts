@@ -18,7 +18,6 @@ const schemaOptions = {
   toJSON: {
     getters: true, // Ensure getters are applied when converting to JSON
   },
-  timestamps: true,
 } as const;
 
 // Reaction schema definition
@@ -31,7 +30,7 @@ const reactionSchema = new Schema<IReaction>(
     reactionBody: {
       type: String,
       required: true,
-      maxLength: REACTION_MAX_LENGTH,
+      maxlength: REACTION_MAX_LENGTH,
     },
     username: {
       type: String,
@@ -40,9 +39,11 @@ const reactionSchema = new Schema<IReaction>(
     createdAt: {
       type: Schema.Types.Date, // Use Schema.Types.Date for better typing compatibility
       default: Date.now,
+      get: (timestamp: Date) => formatDate(timestamp) as any, // Ensure the getter is correctly typed
     },
   },
-  schemaOptions);
+  schemaOptions
+);
 
 // Export the schema and interface
 export type { IReaction };

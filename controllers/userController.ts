@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 import { User, Thought, IUser } from '../models';
 
-// Custom error class for better error handling
 class UserError extends Error {
   constructor(public statusCode: number, message: string) {
     super(message);
@@ -10,13 +9,11 @@ class UserError extends Error {
   }
 }
 
-// Type for user creation/update payload
 interface UserPayload {
   username: string;
   email: string;
 }
 
-// Centralized error handler
 const handleControllerError = (error: unknown, res: Response): void => {
   if (error instanceof UserError) {
     res.status(error.statusCode).json({ message: error.message });
@@ -94,10 +91,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
       throw new UserError(404, 'User not found');
     }
 
-    // Delete associated thoughts first
     await Thought.deleteMany({ username: user.username });
-    
-    // Delete the user
     await user.deleteOne();
     
     res.status(200).json({ 
@@ -112,7 +106,6 @@ export const addFriend = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, friendId } = req.params;
 
-    // Validate that friend exists
     const friendExists = await User.findById(friendId);
     if (!friendExists) {
       throw new UserError(404, 'Friend not found');
@@ -137,7 +130,7 @@ export const addFriend = async (req: Request, res: Response): Promise<void> => {
 export const removeFriend = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, friendId } = req.params;
-    
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { $pull: { friends: friendId } },

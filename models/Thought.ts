@@ -1,5 +1,6 @@
 import { Schema, model, Document, Types } from 'mongoose';
 import { IReaction, reactionSchema } from './Reaction';
+import { formatDate } from '../utils/dateFormat';
 
 // Define the interface for Thought document
 interface IThought extends Document {
@@ -34,8 +35,9 @@ const thoughtSchema = new Schema<IThought>(
       minlength: TEXT_LENGTH.MIN,
     },
     createdAt: {
-      type: Schema.Types.Date, // Use Schema.Types.Date for better typing compatibility
+      type: Schema.Types.Date,
       default: Date.now,
+      get: (timestamp: Date) => formatDate(timestamp) as any,
     },
     username: {
       type: String,

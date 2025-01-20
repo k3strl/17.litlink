@@ -8,13 +8,11 @@ interface IUser extends Document {
   friendCount: number; // Virtual property
 }
 
-// Separate schema configuration for better readability
 const schemaOptions = {
   toJSON: { virtuals: true },
   id: false,
 } as const;
 
-// Separate email validation regex
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const userSchema = new Schema<IUser>(
@@ -43,13 +41,11 @@ const userSchema = new Schema<IUser>(
   schemaOptions
 );
 
-// Virtual for friend count
 userSchema.virtual('friendCount').get(function(this: IUser) {
   return this.friends.length;
 });
 
-// Create the model
 const User = model<IUser>('User', userSchema);
 
-export type { IUser };  // Export the interface for use in other files
+export type { IUser };
 export default User;
