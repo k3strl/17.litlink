@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# LitLink
 
-Currently, two official plugins are available:
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Description
 
-## Expanding the ESLint configuration
+LitLink is a social network API that allows users to share their thoughts, add other users as friends, and react to friends' thoughts.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Table of Contents
 
-- Configure the top-level `parserOptions` property like this:
+- [LitLink](#litlink)
+  - [Description](#description)
+  - [Table of Contents](#table-of-contents)
+  - [Screenshot](#screenshot)
+  - [User Story](#user-story)
+  - [Acceptance Criteria](#acceptance-criteria)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Credits](#credits)
+  - [License](#license)
+  - [How to Contribute](#how-to-contribute)
+  - [Tests](#tests)
+  - [Questions?](#questions)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Screenshot
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Demo video coming soon.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+![Screenshot of Insomnia w/ endpoints and data.](/assets/screenshot.png)
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## User Story
+
+- AS A social media startup
+- I WANT an API for my social network that uses a NoSQL database
+- SO THAT my website can handle large amounts of unstructured data
+
+## Acceptance Criteria
+
+- GIVEN a social network API
+- WHEN I enter the command to invoke the application
+- THEN my server is started and the Mongoose models are synced to the MongoDB database
+- WHEN I open API GET routes in Insomnia for users and thoughts
+- THEN the data for each of these routes is displayed in a formatted JSON
+- WHEN I test API POST, PUT, and DELETE routes in Insomnia
+- THEN I am able to successfully create, update, and delete users and thoughts in my database
+- WHEN I test API POST and DELETE routes in Insomnia
+- THEN I am able to successfully create and delete reactions to thoughts and add and remove friends to a user's friend list
+
+## Installation
+
+Ensure Node.js is installed. Download or clone the repo. Use `npm i` to install the dependencies needed for the project. Use `npm run build` to build the app. Use `npm start` to run the server.
+
+## Usage
+
+While server is running, utilize Insomnia, MongoDBCompass or similar program which can simulate API calls. Use the appropriate routes listed in the routes code.
+
+## Credits
+
+All code done by me. TA's time graciously donated when having issues with Insomnia. Several YouTube tutorials were also utilized to help understand API structure.
+
+## License
+
+This project is licensed under the ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) [MIT](https://opensource.org/licenses/MIT) license.
+
+## How to Contribute
+
+No contributions needed at this time - but feel free to download, fork, use, and play with as desired.
+
+## Tests
+
+See above; [Usage](#usage) instructions.
+
+## Questions?
+
+Contact me at
+[GitHub](https://github.com/k3strl), or email me at: <k3strl@geemail.com>.
