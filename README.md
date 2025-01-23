@@ -57,7 +57,7 @@ While server is running, utilize Insomnia, MongoDBCompass or similar program whi
 
 ## Credits
 
-All code written by me. TA's time graciously donated when having issues with Insomnia. Several YouTube tutorials were also utilized to help understand API structure.
+All code written by me, with help from several AI chhatbots, incl. Claude, ChatGPT, and GitHub Copilot. TA's time graciously donated when having issues with Insomnia. Several YouTube tutorials were also utilized to help understand API structure.
 
 ## License
 
