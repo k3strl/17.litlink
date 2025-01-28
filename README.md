@@ -25,7 +25,7 @@ LitLink is a social network API that allows users to share their thoughts, add o
 
 ## Screenshot
 
-Demo video coming soon.
+Demo video is [here](https://drive.google.com/file/d/1g6Ewg2frARg28zG7BMuqnGkQb1G0_NSd).
 
 ![Screenshot of Insomnia w/ endpoints and data.](/assets/screenshot.png)
 
